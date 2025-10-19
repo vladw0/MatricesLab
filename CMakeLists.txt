@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
-project(MatricesLab)
+project(MatrixLab)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Основное приложение
-add_executable(matrices_lab 
+add_executable(matrix_lab 
     src/main.cpp
     src/vector.cpp
     src/square_matrix.cpp
@@ -14,19 +14,25 @@ add_executable(matrices_lab
 )
 
 # Настройки компиляции для основного приложения
-target_include_directories(matrices_lab PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(matrix_lab PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
 if(MSVC)
-    target_compile_options(matrices_lab PRIVATE /W4)
+    target_compile_options(matrix_lab PRIVATE /W4)
 else()
-    target_compile_options(matrices_lab PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(matrix_lab PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 # Тесты
 enable_testing()
 
-# ВАРИАНТ 1: Использование системного GTest (рекомендуется)
-find_package(GTest REQUIRED)
+# Компилируем Google Test из исходников
+set(GTEST_SOURCES
+    gtest/gtest-all.cc
+    gtest/gtest_main.cc
+)
+
+add_library(gtest STATIC ${GTEST_SOURCES})
+target_include_directories(gtest PUBLIC gtest)
 
 # Исполняемый файл для тестов
 add_executable(matrix_tests
@@ -43,7 +49,7 @@ add_executable(matrix_tests
 
 # Настройки для тестов
 target_include_directories(matrix_tests PUBLIC ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(matrix_tests GTest::gtest GTest::gtest_main)
+target_link_libraries(matrix_tests gtest)
 
 if(MSVC)
     target_compile_options(matrix_tests PRIVATE /W4)
